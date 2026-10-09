@@ -4,124 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-  <title>Exercise Tracker</title>
-=======
-  <title>URL Shortener Microservice</title>
->>>>>>> 92e306c08d823698c4739b50732cd778a8a82085
-  <link rel="stylesheet" href="/style.css">
+  <title>File Metadata Microservice</title>
 </head>
 <body>
-  <main class="container">
-<<<<<<< HEAD
-    <h1>Exercise Tracker</h1>
-    <p>Track your workouts and keep a record of your progress.</p>
+  <h1>File Metadata Microservice</h1>
 
-    <section>
-      <h2>Create User</h2>
-      <form action="/api/users" method="POST">
-        <label for="username">Username</label>
-        <input
-          id="username"
-          type="text"
-          name="username"
-          placeholder="Enter username"
-          required
-        >
-        <button type="submit">Create User</button>
-      </form>
-    </section>
-
-    <section>
-      <h2>Add Exercise</h2>
-      <form id="exercise-form">
-        <label for="userId">User ID</label>
-        <input id="userId" name="userId" required>
-
-        <label for="description">Description</label>
-        <input id="description" name="description" required>
-
-        <label for="duration">Duration (minutes)</label>
-        <input
-          id="duration"
-          name="duration"
-          type="number"
-          min="1"
-          required
-        >
-
-        <label for="date">Date (optional)</label>
-        <input id="date" name="date" type="date">
-
-        <button type="submit">Add Exercise</button>
-      </form>
-      <pre id="result"></pre>
-    </section>
-
-    <script>
-      document
-        .getElementById("exercise-form")
-        .addEventListener("submit", async (event) => {
-          event.preventDefault();
-
-          const form = event.currentTarget;
-          const userId = form.userId.value.trim();
-
-          const data = {
-            description: form.description.value,
-            duration: form.duration.value
-          };
-
-          if (form.date.value) {
-            data.date = form.date.value;
-          }
-
-          const result = document.getElementById("result");
-
-          try {
-            const response = await fetch(
-              `/api/users/${encodeURIComponent(userId)}/exercises`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-              }
-            );
-
-            result.textContent = JSON.stringify(
-              await response.json(),
-              null,
-              2
-            );
-          } catch {
-            result.textContent = "An error occurred.";
-          }
-        });
-    </script>
-=======
-    <h1>URL Shortener Microservice</h1>
-    <p>Enter a valid URL to generate a short link.</p>
-
-    <form action="/api/shorturl" method="POST">
-      <label for="url">URL:</label>
-      <input
-        id="url"
-        type="url"
-        name="url"
-        placeholder="https://example.com"
-        required
-      >
-      <button type="submit">Shorten URL</button>
-    </form>
-
-    <section>
-      <h2>API Usage</h2>
-      <p>POST <code>/api/shorturl</code> with a form field named <code>url</code>.</p>
-      <p>Open <code>/api/shorturl/:short_url</code> to redirect.</p>
-    </section>
->>>>>>> 92e306c08d823698c4739b50732cd778a8a82085
-  </main>
+  <form
+    action="/api/fileanalyse"
+    method="POST"
+    enctype="multipart/form-data"
+  >
+    <label for="upfile">Select a file:</label>
+    <input type="file" name="upfile" id="upfile" required>
+    <button type="submit">Upload</button>
+  </form>
 </body>
 </html>
