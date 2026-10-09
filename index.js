@@ -7,17 +7,24 @@ const app = express();
 app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(express.static("public"));
 
+// Page d'accueil
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/api/:date?", (req, res) => {
-  const input = req.params.date;
+// API Timestamp : avec ou sans date
+app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
+  const input = req.params[0];
 
-  const date =
-    input === undefined
-      ? new Date()
-      : new Date(/^-?\d+$/.test(input) ? Number(input) : input);
+  let date;
+
+  if (input === undefined || input === "") {
+    date = new Date();
+  } else if (/^-?\d+$/.test(input)) {
+    date = new Date(Number(input));
+  } else {
+    date = new Date(input);
+  }
 
   if (Number.isNaN(date.getTime())) {
     return res.json({ error: "Invalid Date" });
@@ -29,4 +36,5 @@ app.get("/api/:date?", (req, res) => {
   });
 });
 
+// Export pour Vercel
 module.exports = app;
