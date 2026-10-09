@@ -4,25 +4,30 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-function sendTimestamp(req, res) {
+// Route sans date : le paramètre est réellement absent
+app.get("/api", (req, res) => {
+  const now = new Date();
+
+  return res.json({
+    unix: now.getTime(),
+    utc: now.toUTCString()
+  });
+});
+
+// Route avec date optionnelle
+app.get("/api/:date", (req, res) => {
   const input = req.params.date;
 
-  let date;
-
-  if (input === undefined || input === "") {
-    date = new Date();
-  } else if (/^-?\d+$/.test(input)) {
-    date = new Date(Number(input));
-  } else {
-    date = new Date(input);
-  }
+  const date = /^-?\d+$/.test(input)
+    ? new Date(Number(input))
+    : new Date(input);
 
   if (Number.isNaN(date.getTime())) {
     return res.json({ error: "Invalid Date" });
@@ -32,18 +37,6 @@ function sendTimestamp(req, res) {
     unix: date.getTime(),
     utc: date.toUTCString()
   });
-}
-
-app.get("/api", (req, res) => {
-  req.params.date = undefined;
-  sendTimestamp(req, res);
 });
-
-app.get("/api/", (req, res) => {
-  req.params.date = undefined;
-  sendTimestamp(req, res);
-});
-
-app.get("/api/:date", sendTimestamp);
 
 module.exports = app;
