@@ -1,32 +1,100 @@
+
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise Tracker</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Exercise Tracker</h1>
+    <p>Track your workouts and keep a record of your progress.</p>
 
-<html>
-   <head>
-      <title>Timestamp Microservice | freeCodeCamp.org</title>
-      <link rel="shortcut icon" href="https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png" type="image/x-icon"/>
-      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
-      <link href="style.css" rel="stylesheet" type="text/css">
-   </head>
+    <section>
+      <h2>Create User</h2>
+      <form action="/api/users" method="POST">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Enter username"
+          required
+        >
+        <button type="submit">Create User</button>
+      </form>
+    </section>
 
-   <body>
-    <h1>Timestamp Microservice</h1>
-    <hr />
-    <div class="container">
-      <h2>Example Usage:</h2>
-      <ul>
-        <li><a href="api/2015-12-25">[project url]/api/2015-12-25</a></li>
-        <li><a href="api/1451001600000">[project url]/api/1451001600000</a></li>
-      </ul>
+    <section>
+      <h2>Add Exercise</h2>
+      <form id="exercise-form">
+        <label for="userId">User ID</label>
+        <input id="userId" name="userId" required>
 
-      <h2>Example Output:</h2>
-      <p>
-        <code>{"unix":1451001600000, "utc":"Fri, 25 Dec 2015 00:00:00 GMT"}</code>
-      </p>
-    </div>
-    <div class="footer">
-      <p>
-        By <a href="https://www.freecodecamp.org/">freeCodeCamp.org</a>
-      </p>
-    </div>
-  </body>
+        <label for="description">Description</label>
+        <input id="description" name="description" required>
+
+        <label for="duration">Duration (minutes)</label>
+        <input
+          id="duration"
+          name="duration"
+          type="number"
+          min="1"
+          required
+        >
+
+        <label for="date">Date (optional)</label>
+        <input id="date" name="date" type="date">
+
+        <button type="submit">Add Exercise</button>
+      </form>
+      <pre id="result"></pre>
+    </section>
+
+    <script>
+      document
+        .getElementById("exercise-form")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const form = event.currentTarget;
+          const userId = form.userId.value.trim();
+
+          const data = {
+            description: form.description.value,
+            duration: form.duration.value
+          };
+
+          if (form.date.value) {
+            data.date = form.date.value;
+          }
+
+          const result = document.getElementById("result");
+
+          try {
+            const response = await fetch(
+              `/api/users/${encodeURIComponent(userId)}/exercises`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+              }
+            );
+
+            result.textContent = JSON.stringify(
+              await response.json(),
+              null,
+              2
+            );
+          } catch {
+            result.textContent = "An error occurred.";
+          }
+        });
+    </script>
+  </main>
+</body>
 </html>

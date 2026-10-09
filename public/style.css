@@ -1,46 +1,64 @@
-/****** Main Styling ******/
+
+* {
+  box-sizing: border-box;
+}
 
 body {
-	font-family: 'Roboto', sans-serif;
-	font-size: 16px;
-	color: #222;
-	background-color: #FaFaFa;
-	text-align: center;
-	line-height: 1.4em;
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
 }
 
 .container {
-	padding: 0;
-	margin-top: 40px;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-h3 {
-  margin-top: 30px;
+h1 {
+  color: #2563eb;
 }
 
-hr {
-	margin: 25px;
+section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
 }
 
-.footer {
-	margin-top: 40px;
+form {
+  display: grid;
+  gap: 10px;
 }
 
-code {
-  font-family: monospace;
-  padding: 2px;
-  color: black;
-  background-color: #fff;
+input,
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 7px;
+  font-size: 16px;
 }
 
-ul {
-	list-style-type: none;
+input {
+  border: 1px solid #cbd5e1;
 }
 
-li {
-  margin-bottom: 0.5em;
+button {
+  color: white;
+  background: #2563eb;
+  border: none;
+  cursor: pointer;
 }
 
-a {
-	color: #2574A9;
+button:hover {
+  background: #1d4ed8;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
