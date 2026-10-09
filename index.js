@@ -8,53 +8,84 @@ const path = require("node:path");
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Page d'accueil
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 
-// Connexion MongoDB
-const mongoUri = process.env.MONGO_URI;
-
-if (mongoUri) {
-  mongoose
-    .connect(mongoUri)
-    .then(() => console.log("MongoDB connected successfully"))
-    .catch((err) => {
-      console.error("MongoDB connection error:", err.message);
-    });
-} else {
-  console.error("MONGO_URI is missing from environment variables");
-}
-
 // Schéma des exercices
 const exerciseSchema = new mongoose.Schema({
-  description: { type: String, required: true },
-  duration: { type: Number, required: true },
-  date: { type: Date, required: true }
+  description: {
+    type: String,
+    required: true
+  },
+  duration: {
+    type: Number,
+    required: true
+  },
+  date: {
+    type: Date,
+    required: true
+  }
 });
 
 // Schéma des utilisateurs
 const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
+  username: {
+    type: String,
+    required: true
+  },
   log: [exerciseSchema]
 });
 
 const User = mongoose.model("User", userSchema);
 
-// Vérifier la connexion à MongoDB pour les routes API
-app.use("/api", (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({
-      error: "Database unavailable. Check MONGO_URI."
-    });
+// Connexion MongoDB réutilisable sur Vercel
+let connectionPromise;
+
+async function connectToDatabase() {
+  if (mongoose.connection.readyState === 1) {
+    return;
   }
 
-  next();
+  if (!process.env.MONGO_URI) {
+    throw new Error(
+      "MONGO_URI is missing from environment variables"
+    );
+  }
+
+  if (!connectionPromise) {
+    connectionPromise = mongoose
+      .connect(process.env.MONGO_URI, {
+        serverSelectionTimeoutMS: 10000
+      })
+      .catch((err) => {
+        connectionPromise = null;
+        throw err;
+      });
+  }
+
+  await connectionPromise;
+}
+
+// Connexion requise pour toutes les routes API
+app.use("/api", async (req, res, next) => {
+  try {
+    await connectToDatabase();
+    next();
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message);
+
+    return res.status(503).json({
+      error: "Database unavailable. Check Vercel runtime logs."
+    });
+  }
 });
 
 // Créer un utilisateur
@@ -82,6 +113,7 @@ app.post("/api/users", async (req, res) => {
     });
   } catch (err) {
     console.error("Create user error:", err.message);
+
     return res.status(500).json({
       error: "Could not create user"
     });
@@ -101,13 +133,14 @@ app.get("/api/users", async (req, res) => {
     );
   } catch (err) {
     console.error("Get users error:", err.message);
+
     return res.status(500).json({
       error: "Could not retrieve users"
     });
   }
 });
 
-// Ajouter un exercice
+// Ajouter un exercice à un utilisateur
 app.post("/api/users/:_id/exercises", async (req, res) => {
   try {
     const { _id } = req.params;
@@ -198,6 +231,7 @@ app.get("/api/users/:_id/log", async (req, res) => {
 
     let exercises = user.log || [];
 
+    // Filtrer à partir d'une date
     if (from) {
       const fromDate = new Date(from);
 
@@ -212,6 +246,7 @@ app.get("/api/users/:_id/log", async (req, res) => {
       );
     }
 
+    // Filtrer jusqu'à une date
     if (to) {
       const toDate = new Date(to);
 
@@ -226,6 +261,7 @@ app.get("/api/users/:_id/log", async (req, res) => {
       );
     }
 
+    // Limiter le nombre d'exercices
     if (limit !== undefined) {
       const limitNumber = Number(limit);
 
@@ -263,6 +299,7 @@ app.get("/api/users/:_id/log", async (req, res) => {
   }
 });
 
+// Démarrage local
 const port = process.env.PORT || 3000;
 
 if (require.main === module) {
@@ -271,4 +308,5 @@ if (require.main === module) {
   });
 }
 
+// Export pour Vercel
 module.exports = app;
