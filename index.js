@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 
@@ -11,8 +10,8 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// Route sans date : le paramètre est réellement absent
-app.get("/api", (req, res) => {
+// API : date absente, avec ou sans slash final
+app.get(["/api", "/api/"], (req, res) => {
   const now = new Date();
 
   return res.json({
@@ -21,7 +20,7 @@ app.get("/api", (req, res) => {
   });
 });
 
-// Route avec date optionnelle
+// API : date fournie
 app.get("/api/:date", (req, res) => {
   const input = req.params.date;
 
