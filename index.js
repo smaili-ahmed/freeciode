@@ -6,41 +6,25 @@ const app = express();
 app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(express.static("public"));
 
-// Page d'accueil
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// Timestamp Microservice
-// Accepte /api, /api/ et /api/:date
-app.get("/api/:date?", (req, res) => {
-  const input = req.params.date;
-  let date;
+app.get("/api/whoami", (req, res) => {
+  const ipaddress =
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.socket.remoteAddress ||
+    "";
 
-  // Aucun paramètre de date : renvoyer la date actuelle
-  if (input === undefined || input === "") {
-    date = new Date();
-  } 
-  // Timestamp Unix en millisecondes
-  else if (/^-?\d+$/.test(input)) {
-    date = new Date(Number(input));
-  } 
-  // Chaîne de date
-  else {
-    date = new Date(input);
-  }
+  const language = req.headers["accept-language"] || "";
 
-  // Date invalide
-  if (Number.isNaN(date.getTime())) {
-    return res.json({ error: "Invalid Date" });
-  }
+  const software = req.headers["user-agent"] || "";
 
-  // Réponse JSON
-  return res.json({
-    unix: date.getTime(),
-    utc: date.toUTCString()
+  res.json({
+    ipaddress,
+    language,
+    software
   });
 });
 
-// Export requis pour Vercel
 module.exports = app;
