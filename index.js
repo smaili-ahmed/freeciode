@@ -11,14 +11,13 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// API Timestamp Microservice
+// Timestamp Microservice
 // Accepte /api, /api/ et /api/:date
-app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
-  const input = req.params[0];
-
+app.get("/api/:date?", (req, res) => {
+  const input = req.params.date;
   let date;
 
-  // Date vide : retourner la date actuelle
+  // Aucun paramètre de date : renvoyer la date actuelle
   if (input === undefined || input === "") {
     date = new Date();
   } 
@@ -26,7 +25,7 @@ app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
   else if (/^-?\d+$/.test(input)) {
     date = new Date(Number(input));
   } 
-  // Chaîne de date classique
+  // Chaîne de date
   else {
     date = new Date(input);
   }
@@ -43,5 +42,5 @@ app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
   });
 });
 
-// Export nécessaire pour Vercel
+// Export requis pour Vercel
 module.exports = app;
