@@ -11,34 +11,37 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// API Timestamp : gère /api, /api/ et /api/:date
+// API Timestamp Microservice
+// Accepte /api, /api/ et /api/:date
 app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
   const input = req.params[0];
 
   let date;
 
-  // Si la date est absente ou vide, retourner la date actuelle
+  // Date vide : retourner la date actuelle
   if (input === undefined || input === "") {
     date = new Date();
-  } else if (/^-?\d+$/.test(input)) {
-    // Les nombres sont interprétés comme des timestamps Unix en millisecondes
+  } 
+  // Timestamp Unix en millisecondes
+  else if (/^-?\d+$/.test(input)) {
     date = new Date(Number(input));
-  } else {
-    // Les autres valeurs sont analysées comme des chaînes de date
+  } 
+  // Chaîne de date classique
+  else {
     date = new Date(input);
   }
 
-  // Vérifier si la date est invalide
+  // Date invalide
   if (Number.isNaN(date.getTime())) {
     return res.json({ error: "Invalid Date" });
   }
 
-  // Retourner le timestamp Unix et la date UTC
+  // Réponse JSON
   return res.json({
     unix: date.getTime(),
     utc: date.toUTCString()
   });
 });
 
-// Export pour Vercel
+// Export nécessaire pour Vercel
 module.exports = app;
