@@ -1,9 +1,10 @@
 
 const express = require("express");
+const cors = require("cors");
+
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-
+app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
@@ -18,16 +19,14 @@ app.get("/api/:date?", (req, res) => {
       ? new Date()
       : new Date(/^-?\d+$/.test(input) ? Number(input) : input);
 
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return res.json({ error: "Invalid Date" });
   }
 
-  res.json({
+  return res.json({
     unix: date.getTime(),
     utc: date.toUTCString()
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;
