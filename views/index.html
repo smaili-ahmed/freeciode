@@ -4,11 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
   <title>Exercise Tracker</title>
+=======
+  <title>URL Shortener Microservice</title>
+>>>>>>> 92e306c08d823698c4739b50732cd778a8a82085
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <main class="container">
+<<<<<<< HEAD
     <h1>Exercise Tracker</h1>
     <p>Track your workouts and keep a record of your progress.</p>
 
@@ -95,6 +100,28 @@
           }
         });
     </script>
+=======
+    <h1>URL Shortener Microservice</h1>
+    <p>Enter a valid URL to generate a short link.</p>
+
+    <form action="/api/shorturl" method="POST">
+      <label for="url">URL:</label>
+      <input
+        id="url"
+        type="url"
+        name="url"
+        placeholder="https://example.com"
+        required
+      >
+      <button type="submit">Shorten URL</button>
+    </form>
+
+    <section>
+      <h2>API Usage</h2>
+      <p>POST <code>/api/shorturl</code> with a form field named <code>url</code>.</p>
+      <p>Open <code>/api/shorturl/:short_url</code> to redirect.</p>
+    </section>
+>>>>>>> 92e306c08d823698c4739b50732cd778a8a82085
   </main>
 </body>
 </html>
