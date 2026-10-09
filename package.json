@@ -1,14 +1,15 @@
 
 {
-  "name": "url-shortener-microservice",
+  "name": "exercise-tracker",
   "version": "1.0.0",
-  "description": "freeCodeCamp URL Shortener Microservice",
+  "description": "freeCodeCamp Exercise Tracker Microservice",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
   }
 }
