@@ -1,5 +1,4 @@
-
-{
+<escape>{
   "version": 2,
   "builds": [
     {
@@ -13,4 +12,4 @@
       "dest": "index.js"
     }
   ]
-}
+}</escape>
