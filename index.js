@@ -4,17 +4,15 @@ const cors = require("cors");
 
 const app = express();
 
-app.use(cors({ optionsSuccessStatus: 200 }));
+app.use(cors());
 app.use(express.static("public"));
 
-// Page d'accueil
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-// API Timestamp : avec ou sans date
-app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
-  const input = req.params[0];
+function sendTimestamp(req, res) {
+  const input = req.params.date;
 
   let date;
 
@@ -34,7 +32,18 @@ app.get(/^\/api(?:\/(.*))?\/?$/, (req, res) => {
     unix: date.getTime(),
     utc: date.toUTCString()
   });
+}
+
+app.get("/api", (req, res) => {
+  req.params.date = undefined;
+  sendTimestamp(req, res);
 });
 
-// Export pour Vercel
+app.get("/api/", (req, res) => {
+  req.params.date = undefined;
+  sendTimestamp(req, res);
+});
+
+app.get("/api/:date", sendTimestamp);
+
 module.exports = app;
